@@ -6,7 +6,7 @@ USE SampleDB
 GO
 
 -- create table:
-CREATE TABLE employees (
+CREATE TABLE dbo.employees (
 	employee_id INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
 	first_name VARCHAR(150) NOT NULL,
 	last_name VARCHAR(150) NOT NULL,
