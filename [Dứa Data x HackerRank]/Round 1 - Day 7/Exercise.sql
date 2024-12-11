@@ -32,3 +32,26 @@ SELECT ProductCategory,
 FROM dbo.SalesData
 WHERE ProductCategory = 'Electronics'
 GROUP BY ProductCategory;
+
+-- Phần 02: Sử dụng GROUP BY và Aggregate Functions
+-- 1. Tính tổng doanh thu (Revenue) và số lượng giao dịch theo khu vực (Region):
+SELECT Region,
+	   SUM(COALESCE(Revenue, 0)) AS sum_revenue,
+	   COUNT(OrderID) AS count_order
+FROM dbo.SalesData
+WHERE Region IS NOT NULL
+GROUP BY Region;
+
+-- 2. Tính giá trị trung bình của UnitPrice theo danh mục sản phẩm (ProductCategory):
+SELECT ProductCategory,
+	   AVG(UnitPrice) AS avg_unit_price
+FROM dbo.SalesData
+GROUP BY ProductCategory;
+
+-- 3. Đếm số lượng đơn hàng theo từng khu vực và sắp xếp theo số lượng giảm dần:
+SELECT Region,
+	   COUNT(OrderID) AS count_order
+FROM dbo.SalesData
+WHERE Region IS NOT NULL
+GROUP BY Region
+ORDER BY count_order DESC;
