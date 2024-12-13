@@ -119,3 +119,36 @@ SELECT ProductCategory,
 	   avg_unit_price
 FROM CTE_AVG_UNIT_PRICE_BY_PRODUCT_CATEGORY
 WHERE avg_unit_price > 150;
+
+-- Phần 05: Kết Hợp Nhiều Kỹ Thuật
+-- 1. Tính tỷ lệ đơn hàng có giá trị Revenue bị NULL so với tổng số đơn hàng trong mỗi khu vực.
+SELECT Region,
+	   CAST(COUNT(
+		CASE
+		WHEN Revenue IS NULL THEN 1 END
+	   ) AS FLOAT) / COUNT(*) AS order_rate
+FROM dbo.SalesData
+GROUP BY Region;
+
+-- 2. Tìm danh mục sản phẩm (ProductCategory) có tỷ lệ đơn hàng bị giảm giá (Discount > 0) cao nhất.
+WITH CTE_DISCOUNT_RATE_BY_PRODUCT_CATEGORY AS (
+	SELECT ProductCategory,
+		   CAST(COUNT(
+			CASE
+			WHEN Discount IS NOT NULL AND Discount > 0 THEN 1
+			END
+		  ) AS FLOAT) / COUNT(*) AS discount_rate
+	FROM dbo.SalesData
+	GROUP BY ProductCategory
+)
+SELECT TOP 1 ProductCategory,
+			 discount_rate
+FROM CTE_DISCOUNT_RATE_BY_PRODUCT_CATEGORY
+ORDER BY discount_rate DESC;
+
+-- 3. Kết hợp GROUP BY và HAVING để lọc ra các khu vực có tổng doanh thu (Revenue) lớn hơn 3000.
+SELECT Region,
+	   SUM(COALESCE(Revenue, 0)) AS sum_revenue
+FROM dbo.SalesData
+GROUP BY Region
+HAVING SUM(COALESCE(Revenue, 0)) > 3000;
